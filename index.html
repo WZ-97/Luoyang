@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>神都舆图 - 历代都城志</title>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; background: #050505; color: #eee; font-family: "Noto Serif SC", serif; overflow: hidden; }
+        
+        /* 地图窗口 */
+        #map { position: absolute; top: 0; bottom: 0; width: 75%; left: 0; }
+        
+        /* 右侧叙事层 */
+        #story {
+            position: absolute; width: 25%; right: 0; top: 0; bottom: 0;
+            overflow-y: auto; background: rgba(10, 10, 10, 0.95);
+            border-left: 1px solid #d4af37; scroll-behavior: smooth;
+        }
+        
+        .chapter {
+            padding: 120px 25px; border-bottom: 1px solid #222;
+            opacity: 0.3; transition: all 0.8s; transform: scale(0.9);
+        }
+        .chapter.active { opacity: 1; transform: scale(1); background: rgba(212, 175, 55, 0.05); }
+        
+        h2 { color: #d4af37; border-bottom: 2px solid #d4af37; display: inline-block; padding-bottom: 5px; }
+        p { line-height: 1.8; font-size: 15px; color: #bbb; }
+        .highlight { color: #ffcc00; font-weight: bold; }
+
+        /* 隐藏地图版权信息，保持高级感 */
+        .mapboxgl-ctrl-bottom-right { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="story">
+    <section id="start" class="chapter active">
+        <h2>神都·万代轴</h2>
+        <p>洛阳，“五都贯洛”的地理奇迹。在这条洛河岸边，层层叠叠压着夏、商、周、汉魏、隋唐五座都城。请向下滚动，开启时空之旅。</p>
+    </section>
+
+    <section id="erlitou" class="chapter">
+        <h2>夏 · 二里头</h2>
+        <p>这里是<span class="highlight">“最早的中国”</span>。三千八百年前，华夏文明的王气在此凝聚。</p>
+        <p>遗址：二里头夏都遗址博物馆</p>
+    </section>
+
+    <section id="hanwei" class="chapter">
+        <h2>汉魏 · 故城</h2>
+        <p>丝绸之路的东方起点。曹魏、西晋、北魏曾在此经营，那是佛教初传、经学昌盛的时代。</p>
+        <p>遗址：<span class="highlight">白马寺、永宁寺塔基</span></p>
+    </section>
+
+    <section id="suitang" class="chapter">
+        <h2>隋唐 · 宫城</h2>
+        <p>武则天心中的<span class="highlight">万象神宫</span>。应天门是当时世界上最宏伟的宫门之一。</p>
+        <p>遗址：应天门、明堂、天堂、九州池</p>
+    </section>
+
+    <section id="longmen" class="chapter">
+        <h2>永恒 · 伊阙</h2>
+        <p>伊水两岸，万尊金身。这是镌刻在石头上的大唐气象。</p>
+        <p>遗址：<span class="highlight">龙门石窟、奉先寺</span></p>
+    </section>
+</div>
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoid3o5NyIsImEiOiJjbWx1dGtvaHcwMTJsM2Vvam40azdwaGE1In0.gKbb-oBaMaFaobpn0v3LFQ';
+
+    const chapters = {
+        'start': { center: [112.454, 34.620], zoom: 11, pitch: 0, bearing: 0 },
+        'erlitou': { center: [112.698, 34.700], zoom: 14.5, pitch: 45, bearing: -20 },
+        'hanwei': { center: [112.635, 34.726], zoom: 14.8, pitch: 40, bearing: 10 },
+        'suitang': { center: [112.454, 34.658], zoom: 15.2, pitch: 50, bearing: 0 },
+        'longmen': { center: [112.470, 34.557], zoom: 15.5, pitch: 60, bearing: 30 }
+    };
+
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/satellite-streets-v12',
+        center: chapters['start'].center,
+        zoom: chapters['start'].zoom,
+        projection: 'mercator'
+    });
+
+    // 滚动交互控制
+    const story = document.getElementById('story');
+    story.onscroll = () => {
+        const chapterNames = Object.keys(chapters);
+        for (const name of chapterNames) {
+            const el = document.getElementById(name);
+            const rect = el.getBoundingClientRect();
+            if (rect.top >= 0 && rect.top <= window.innerHeight / 2) {
+                if (name !== activeChapterName) {
+                    map.flyTo({
+                        ...chapters[name],
+                        duration: 3000,
+                        essential: true
+                    });
+                    el.classList.add('active');
+                    document.getElementById(activeChapterName).classList.remove('active');
+                    activeChapterName = name;
+                }
+                break;
+            }
+        }
+    };
+
+    let activeChapterName = 'start';
+
+    map.on('load', () => {
+        // 隐藏不需要的默认标签
+        map.getStyle().layers.forEach(l => {
+            if (l.type === 'symbol' && !l.id.includes('label')) {
+                map.setLayoutProperty(l.id, 'visibility', 'none');
+            }
+        });
+
+        // 模拟添加一个隋唐城的虚拟轮廓（可以用GeoJSON替换）
+        map.addSource('suitang-outline', {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [[[112.42, 34.64], [112.48, 34.64], [112.48, 34.68], [112.42, 34.68], [112.42, 34.64]]]
+                }
+            }
+        });
+        
+        map.addLayer({
+            'id': 'suitang-fill',
+            'type': 'fill',
+            'source': 'suitang-outline',
+            'paint': { 'fill-color': '#d4af37', 'fill-opacity': 0.1 }
+        });
+    });
+</script>
+</body>
+</html>
