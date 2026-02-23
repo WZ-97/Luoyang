@@ -1,243 +1,918 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <title>神都舆图 - 洛阳十朝考古史诗</title>
-    <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap');
-        
-        body { margin: 0; padding: 0; background: #f9ddc5; color: #333; font-family: "Noto Serif SC", serif; overflow: hidden; }
-        
-        /* 宣纸纹理层 */
-        #paper-texture {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 5; opacity: 0.35; mix-blend-mode: multiply;
-            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png'); 
-        }
-
-        #map { position: fixed; top: 0; bottom: 0; width: 100%; transition: all 1.2s cubic-bezier(0.65, 0, 0.35, 1); z-index: 1; }
-        
-        #overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: #813033; z-index: 20; cursor: pointer; transition: 1.5s; color: #f9ddc5;
-        }
-
-        #story-panel {
-            position: absolute; width: 40%; right: -40%; top: 0; bottom: 0;
-            background: rgba(129, 48, 51, 0.96); border-left: 2px solid #f9ddc5;
-            transition: right 1.2s ease; overflow-y: auto; z-index: 10;
-            padding-bottom: 60vh; scrollbar-width: none;
-        }
-        #story-panel::-webkit-scrollbar { display: none; }
-        .active-story #story-panel { right: 0; }
-        .active-story #map { width: 60%; }
-
-        section { padding: 15vh 40px; opacity: 0.15; transition: 0.8s; color: #f9ddc5; min-height: 80vh; }
-        section.active { opacity: 1; transform: translateX(-10px); }
-        
-        h2 { border-bottom: 2px solid #f9ddc5; display: inline-block; padding-bottom: 10px; font-size: 2.4rem; margin: 0; }
-        .dynasty-tag { font-size: 1.1rem; opacity: 0.7; margin-top: 10px; display: block; letter-spacing: 2px; }
-        p { line-height: 2.2; font-size: 1.15rem; text-align: justify; margin-top: 30px; font-weight: 300; }
-
-        #progress-bar {
-            position: fixed; top: 0; right: 0; width: 40%; height: 4px;
-            background: #f9ddc5; z-index: 11; transform: scaleX(0);
-            transform-origin: left; transition: 0.1s;
-        }
-    </style>
-</head>
-<body>
-
-<div id="paper-texture"></div>
-<div id="progress-bar"></div>
-
-<div id="overlay" onclick="startJourney()">
-    <h1 style="font-size: 5rem; letter-spacing: 2.5rem; margin-left: 2.5rem;">神都脉系</h1>
-    <p style="letter-spacing: 0.8rem; opacity: 0.8;">洛阳 · 三千年都城考古深度交互图</p>
-</div>
-
-<div id="map"></div>
-
-<div id="story-panel">
-    <section id="chap0" class="active">
-        <h2>序 · 天下之中</h2>
-        <span class="dynasty-tag">LUOYANG · BASIN</span>
-        <p>洛阳盆地，五都并立。这里不是一座城，而是五座超级城市的考古堆叠。通过侧边栏滚动，我们将剥开地层，重回现场。</p>
-    </section>
-
-    <section id="chap1">
-        <h2>夏 · 斟鄩</h2>
-        <span class="dynasty-tag">二里头遗址 (前2070-前1600)</span>
-        <p>最早的中国。这里确立了中国宫城位居中心、中轴线布局的王都范式，是华夏礼制文明的源头。</p>
-    </section>
-
-    <section id="chap2">
-        <h2>商 · 西亳</h2>
-        <span class="dynasty-tag">偃师商城 (前1600-前1046)</span>
-        <p>商汤灭夏后营建。拥有严整的宫城与防御体系，是商王朝早期的政治中心。</p>
-    </section>
-
-    <section id="chap3">
-        <h2>西周 · 成周</h2>
-        <span class="dynasty-tag">汉魏故城东部 (前1046-前771)</span>
-        <p>周公营建，“宅兹中国”。它是镇守东方的重镇，也是周公制礼作乐的核心发生地。</p>
-    </section>
-
-    <section id="chap4">
-        <h2>东周 · 王城</h2>
-        <span class="dynasty-tag">西工遗址 (前770-前256)</span>
-        <p>平王东迁，百家争鸣。城市依涧河而建，形成了早期洛阳市区的文化空间逻辑。</p>
-    </section>
-
-    <section id="chap5">
-        <h2>东汉 · 雒阳</h2>
-        <span class="dynasty-tag">汉魏故城 (25-220)</span>
-        <p>帝国巅峰。南北向长方形城市，宫城居北。这里见证了蔡伦造纸与佛教东传的伟大时刻。</p>
-    </section>
-
-    <section id="chap6">
-        <h2>曹魏 · 洛阳</h2>
-        <span class="dynasty-tag">汉魏故城扩建 (220-265)</span>
-        <p>曹操父子营建。开创了单宫制布局，重点加固了北侧的金墉城，作为军事与政治的核心。</p>
-    </section>
-
-    <section id="chap7">
-        <h2>西晋 · 洛阳</h2>
-        <span class="dynasty-tag">汉魏故城沿用 (265-316)</span>
-        <p>洛阳纸贵，魏晋风骨。西晋承袭曹魏格局，这里是当时全世界最繁华的文化都会。</p>
-    </section>
-
-    <section id="chap8">
-        <h2>北魏 · 洛阳</h2>
-        <span class="dynasty-tag">汉魏故城大扩张 (494-534)</span>
-        <p>孝文帝迁都，全城扩建外郭城。形成了壮阔的坊里体系，龙门石窟的开凿亦始于此时。</p>
-    </section>
-
-    <section id="chap9">
-        <h2>隋 · 东都</h2>
-        <span class="dynasty-tag">隋唐洛阳城 (581-618)</span>
-        <p>隋炀帝依洛河营建。开启了横跨洛河、南北对应的巨大城市格局，确立了隋唐盛世的底色。</p>
-    </section>
-
-    <section id="chap10">
-        <h2>唐 · 神都</h2>
-        <span class="dynasty-tag">隋唐洛阳城巅峰 (618-907)</span>
-        <p>武周盛世，万象神宫。明堂、天堂巍峨屹立，是当时丝绸之路的东方终点，万国来朝。</p>
-    </section>
-</div>
-
-<script>
-    mapboxgl.accessToken = 'pk.eyJ1Ijoid3o5NyIsImEiOiJjbWx3MzQwbjYwODBiM2VxN2NrZTV2YmxrIn0.X1HgEceTb_y1WInHZVggSg';
-
-    // 核心考古边界 (多边形)
-    const zones = {
-        'erlitou': { color: '#c0392b', coords: [[112.690, 34.692], [112.715, 34.692], [112.715, 34.708], [112.700, 34.712], [112.690, 34.708], [112.690, 34.692]] },
-        'shang': { color: '#8e44ad', coords: [[112.783, 34.782], [112.802, 34.782], [112.802, 34.802], [112.788, 34.808], [112.783, 34.802], [112.783, 34.782]] },
-        'chengzhou': { color: '#d35400', coords: [[112.635, 34.715], [112.655, 34.715], [112.655, 34.730], [112.635, 34.730], [112.635, 34.715]] },
-        'wangcheng': { color: '#e67e22', coords: [[112.415, 34.645], [112.440, 34.645], [112.440, 34.685], [112.428, 34.692], [112.415, 34.685], [112.415, 34.645]] },
-        'hanwei-inner': { color: '#1994bf', coords: [[112.610, 34.705], [112.640, 34.705], [112.640, 34.735], [112.625, 34.745], [112.610, 34.735], [112.610, 34.705]] },
-        'hanwei-outer': { color: '#3498db', coords: [[112.580, 34.680], [112.670, 34.680], [112.670, 34.760], [112.580, 34.760], [112.580, 34.680]] },
-        'suitang': { color: '#f39c12', coords: [[112.420, 34.615], [112.495, 34.615], [112.495, 34.665], [112.465, 34.690], [112.425, 34.690], [112.420, 34.665], [112.420, 34.615]] }
-    };
-
-    const chapters = {
-        'chap1': { zone: 'erlitou', center: [112.705, 34.700], zoom: 14.5, pitch: 45 },
-        'chap2': { zone: 'shang', center: [112.793, 34.795], zoom: 14.5, pitch: 45 },
-        'chap3': { zone: 'chengzhou', center: [112.645, 34.722], zoom: 14.8, pitch: 30 },
-        'chap4': { zone: 'wangcheng', center: [112.427, 34.665], zoom: 14.0, pitch: 40 },
-        'chap5': { zone: 'hanwei-inner', center: [112.625, 34.725], zoom: 14.2, pitch: 50 },
-        'chap6': { zone: 'hanwei-inner', center: [112.625, 34.725], zoom: 14.5, pitch: 50 },
-        'chap7': { zone: 'hanwei-inner', center: [112.625, 34.725], zoom: 14.5, pitch: 50 },
-        'chap8': { zone: 'hanwei-outer', center: [112.625, 34.720], zoom: 13.0, pitch: 45 },
-        'chap9': { zone: 'suitang', center: [112.455, 34.652], zoom: 14.2, pitch: 50 },
-        'chap10': { zone: 'suitang', center: [112.455, 34.652], zoom: 15.5, pitch: 60 }
-    };
-
-    const map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/light-v11',
-        center: [112.55, 34.70],
-        zoom: 10,
-        projection: 'globe'
-    });
-
-    map.on('load', () => {
-        // --- 对 Landuse 底图进行古风上色 ---
-        map.setPaintProperty('background', 'background-color', '#f9ddc5'); // 大地色
-        map.setPaintProperty('water', 'fill-color', '#8b7355'); // 历史感深色水系
-        if (map.getLayer('landuse')) map.setPaintProperty('landuse', 'fill-color', '#e8d5c4');
-        if (map.getLayer('building')) {
-            map.setPaintProperty('building', 'fill-color', '#c8b49a');
-            map.setPaintProperty('building', 'fill-opacity', 0.4);
-        }
-
-        map.setFog({'color': '#f9ddc5', 'high-color': '#813033', 'horizon-blend': 0.1});
-
-        // 加载考古遗址层
-        Object.keys(zones).forEach(id => {
-            map.addSource(id, { 'type': 'geojson', 'data': { 'type': 'Feature', 'geometry': { 'type': 'Polygon', 'coordinates': [zones[id].coords] } } });
-            map.addLayer({
-                'id': id,
-                'type': 'fill',
-                'source': id,
-                'paint': {
-                    'fill-color': zones[id].color,
-                    'fill-opacity': 0,
-                    'fill-outline-color': '#fff'
-                }
-            });
-            // 描边层
-            map.addLayer({
-                'id': id + '-line',
-                'type': 'line',
-                'source': id,
-                'paint': {
-                    'line-color': zones[id].color,
-                    'line-width': 2,
-                    'line-opacity': 0
-                }
-            });
-        });
-    });
-
-    function startJourney() {
-        document.getElementById('overlay').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('overlay').style.display = 'none';
-            document.body.classList.add('active-story');
-        }, 1500);
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>洛阳十三朝 · 河图洛书数字回溯展</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --obsidian: #0a0a0c;
+      --earth-yellow: #c4a77d;
+      --earth-light: #d4c4a0;
+      --ink: rgba(230, 220, 210, 0.92);
+      --ink-dim: rgba(190, 180, 165, 0.75);
+      --border-subtle: rgba(180, 165, 140, 0.35);
+      --gold: rgba(212, 180, 120, 0.9);
+      --white-flash: rgba(255, 255, 255, 0.98);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Noto Serif SC', 'STSong', 'SimSun', 'KaiTi', serif;
+      -webkit-font-smoothing: antialiased;
+      background: var(--obsidian);
+      color: var(--ink);
     }
 
-    const storyPanel = document.getElementById('story-panel');
-    storyPanel.onscroll = () => {
-        const sections = document.querySelectorAll('section');
-        let activeId = 'chap0';
-        sections.forEach(s => {
-            const rect = s.getBoundingClientRect();
-            if (rect.top < window.innerHeight * 0.5) activeId = s.id;
+    .view {
+      position: fixed;
+      inset: 0;
+      display: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .view.active { display: block; }
+    .view-transition {
+      position: fixed;
+      inset: 0;
+      background: var(--white-flash);
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .view-transition.flash {
+      opacity: 1;
+      visibility: visible;
+      animation: flashOut 0.6s ease 0.2s forwards;
+    }
+    @keyframes flashOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    /* ========== 序章：三阶段 ========== */
+    .view-intro {
+      background: #000;
+    }
+    #particleCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+
+    .intro-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .intro-layer.interactive {
+      pointer-events: auto;
+    }
+
+    /* 阶段一：打字机文案 */
+    .intro-typewriter {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 480px;
+      font-size: clamp(0.95rem, 3.5vw, 1.15rem);
+      line-height: 2.2;
+      letter-spacing: 0.2em;
+      color: rgba(220, 210, 195, 0.95);
+      text-align: center;
+      min-height: 4em;
+    }
+    .intro-typewriter .line {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .intro-typewriter .line.visible {
+      opacity: 1;
+      animation: fadeInUp 0.8s ease forwards;
+    }
+    .intro-typewriter .line.fadeout {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 阶段二&三：罗盘容器 */
+    .compass-stage {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .compass-stage.active {
+      display: flex;
+    }
+
+    .luoshu-compass {
+      position: relative;
+      width: min(340px, 88vw);
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .luoshu-compass-rings {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(160, 150, 130, 0.25);
+      box-shadow: 
+        0 0 60px rgba(100, 140, 120, 0.08),
+        inset 0 0 40px rgba(60, 80, 70, 0.05);
+    }
+    .luoshu-compass-rings::before {
+      content: '';
+      position: absolute;
+      inset: 8%;
+      border-radius: 50%;
+      border: 1px solid rgba(140, 130, 110, 0.2);
+    }
+
+    /* 中央太极按钮 - 极大，确保点击无Bug */
+    .tai-chi-btn {
+      position: relative;
+      z-index: 10;
+      width: min(160px, 42vw);
+      height: min(160px, 42vw);
+      min-width: 120px;
+      min-height: 120px;
+      border-radius: 50%;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      padding: 0;
+      transition: transform 0.3s ease;
+    }
+    .tai-chi-btn:active {
+      transform: scale(0.98);
+    }
+    .tai-chi-btn.rotating {
+      animation: compassRotate 0.5s linear infinite;
+    }
+    .tai-chi-btn.rotating.fast {
+      animation-duration: 0.15s;
+    }
+    @keyframes compassRotate {
+      to { transform: rotate(360deg); }
+    }
+    .tai-chi-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 20px rgba(180, 160, 120, 0.4));
+    }
+    .tai-chi-svg .yin { fill: #2a2a35; }
+    .tai-chi-svg .yang { fill: #e8e4dc; }
+    .tai-chi-svg .dot-yin { fill: #e8e4dc; }
+    .tai-chi-svg .dot-yang { fill: #2a2a35; }
+
+    /* 八卦方位数字 */
+    .gua-markers {
+      position: absolute;
+      inset: -4%;
+      pointer-events: none;
+    }
+    .gua-marker {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      margin: -12px 0 0 -12px;
+      font-size: 11px;
+      color: rgba(180, 170, 150, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+    }
+    .gua-marker.highlight {
+      color: var(--gold);
+      text-shadow: 0 0 12px rgba(212, 180, 120, 0.8);
+    }
+
+    /* 呼吸灯提示 */
+    .intro-hint-press {
+      position: absolute;
+      bottom: 12%;
+      font-size: clamp(12px, 3vw, 14px);
+      letter-spacing: 0.4em;
+      color: rgba(170, 160, 145, 0.7);
+      animation: breathGlow 2.5s ease-in-out infinite;
+    }
+    @keyframes breathGlow {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    /* ========== 纪传故事页 ========== */
+    .view-story {
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    .story-scroll { min-height: 100%; padding-bottom: 4rem; }
+
+    .story-prologue {
+      position: relative;
+      padding: 1.5rem 1.5rem 0.5rem;
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+      letter-spacing: 0.15em;
+      color: var(--earth-yellow);
+      line-height: 2;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeInUp 0.9s ease 0.2s forwards;
+    }
+
+    .story-hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2rem 1.5rem 4rem;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .story-hero .image-placeholder-macro { will-change: transform; }
+    .story-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.85) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .image-placeholder-macro {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(35,55,65,0.4) 0%, transparent 60%),
+        linear-gradient(165deg, rgba(28,38,45,0.96), rgba(18,25,32,0.98));
+      border: 2px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(11px, 2.5vw, 13px);
+      letter-spacing: 0.25em;
+      color: rgba(140,130,115,0.55);
+      text-align: center;
+      padding: 2.5rem;
+      z-index: 0;
+    }
+    .image-placeholder-macro::before {
+      content: '';
+      position: absolute;
+      inset: 14px;
+      border: 1px dashed rgba(110,100,85,0.35);
+    }
+    .image-placeholder-macro.has-video {
+      background: none;
+      border: none;
+    }
+    .image-placeholder-macro.has-video::before {
+      display: none;
+    }
+    .era-title,
+    .era-theme,
+    .identity-voice {
+      position: relative;
+      z-index: 2;
+    }
+    .era-title {
+      position: relative;
+      font-size: clamp(2.2rem, 8vw, 4rem);
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      transform: translateY(24px);
+      animation: fadeInUp 1s ease 0.3s forwards;
+    }
+    .era-theme {
+      position: relative;
+      font-size: clamp(0.95rem, 3.2vw, 1.2rem);
+      letter-spacing: 0.25em;
+      color: var(--earth-light);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.9s ease 0.5s forwards;
+    }
+    .identity-voice {
+      position: relative;
+      font-size: clamp(0.95rem, 3vw, 1.1rem);
+      line-height: 2.1;
+      letter-spacing: 0.14em;
+      color: var(--ink);
+      max-width: 38rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s ease 0.7s forwards;
+    }
+
+    .story-artifact {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 1.5rem;
+      background: linear-gradient(180deg, rgba(10,12,14,0.5), rgba(20,25,28,0.9));
+    }
+    .artifact-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+      max-width: 48rem;
+      width: 100%;
+    }
+    @media (min-width: 768px) {
+      .artifact-layout { flex-direction: row; align-items: flex-start; gap: 3rem; }
+    }
+    .image-placeholder-micro {
+      position: relative;
+      flex-shrink: 0;
+      width: 100%;
+      max-width: 320px;
+      aspect-ratio: 4/5;
+      background: radial-gradient(ellipse 70% 80% at 50% 30%, rgba(45,60,65,0.5) 0%, transparent 70%),
+        linear-gradient(165deg, rgba(38,48,55,0.95), rgba(24,32,40,0.98));
+      border: 2px solid var(--border-subtle);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(10px, 2.2vw, 12px);
+      letter-spacing: 0.2em;
+      color: rgba(130,120,105,0.5);
+      text-align: center;
+      padding: 1.75rem;
+      box-shadow: 0 20px 56px rgba(0,0,0,0.55);
+    }
+    .artifact-text { flex: 1; }
+    .artifact-story {
+      font-size: clamp(0.9rem, 2.8vw, 1.05rem);
+      line-height: 2.2;
+      letter-spacing: 0.1em;
+      color: var(--ink);
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    .cultural-value {
+      font-size: clamp(0.85rem, 2.5vw, 0.98rem);
+      line-height: 2;
+      letter-spacing: 0.08em;
+      color: var(--earth-light);
+      padding: 1.25rem 1.5rem;
+      background: rgba(40,50,45,0.6);
+      border-left: 4px solid var(--earth-yellow);
+      border-radius: 0 4px 4px 0;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+
+    .story-anchor {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 1.5rem;
+    }
+    .geo-card {
+      position: relative;
+      width: min(380px, 94vw);
+      background: linear-gradient(170deg, #2a2820, #1f1c16, #181512);
+      border: 2px solid rgba(180,160,120,0.4);
+      border-radius: 8px;
+      padding: 2rem 1.75rem;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    }
+    .geo-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--earth-yellow), transparent);
+      opacity: 0.5;
+    }
+    .geo-card-header { text-align: center; padding-bottom: 1.25rem; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(160,145,120,0.25); }
+    .geo-card-title { font-size: clamp(0.95rem, 3vw, 1.1rem); letter-spacing: 0.45em; color: var(--ink); }
+    .geo-card-seal { font-family: 'Ma Shan Zheng', serif; font-size: 1.2rem; color: var(--earth-yellow); margin-top: 0.5rem; }
+    .geo-coord { font-size: clamp(0.95rem, 2.8vw, 1.05rem); line-height: 2; letter-spacing: 0.1em; color: var(--earth-light); }
+    .btn-retry {
+      display: block;
+      margin: 2rem auto 0;
+      padding: 0.9rem 2.5rem;
+      background: linear-gradient(145deg, rgba(50,45,38,0.95), rgba(35,30,25,0.98));
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+      letter-spacing: 0.35em;
+      color: var(--ink-dim);
+      cursor: pointer;
+      transition: all 0.35s ease;
+    }
+    .btn-retry:hover { background: linear-gradient(145deg, rgba(70,65,55,0.9), rgba(50,45,38,0.95)); color: var(--ink); }
+
+    .reveal-trigger { opacity: 0; transform: translateY(28px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .reveal-trigger.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="view-transition" id="viewTransition"></div>
+
+  <!-- 序章 -->
+  <section class="view view-intro active" id="viewIntro">
+    <canvas id="particleCanvas"></canvas>
+    <div class="intro-layer" id="introTypewriterLayer">
+      <div class="intro-typewriter" id="introTypewriter">
+        <div class="line" id="line1"></div>
+        <div class="line" id="line2"></div>
+        <div class="line" id="line3"></div>
+      </div>
+    </div>
+    <div class="compass-stage intro-layer interactive" id="compassStage">
+      <div class="luoshu-compass">
+        <div class="luoshu-compass-rings"></div>
+        <button class="tai-chi-btn" id="taiChiBtn" type="button" aria-label="长按占卜">
+          <svg class="tai-chi-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path class="yang" d="M50 5 Q85 50 50 95 Q15 50 50 5"/>
+            <path class="yin" d="M50 5 Q15 50 50 95 Q85 50 50 5"/>
+            <circle class="dot-yang" cx="50" cy="27" r="6"/>
+            <circle class="dot-yin" cx="50" cy="73" r="6"/>
+          </svg>
+        </button>
+        <div class="gua-markers" id="guaMarkers"></div>
+      </div>
+      <p class="intro-hint-press" id="introHintPress">长按阵眼，唤醒你在洛阳的前世</p>
+    </div>
+  </section>
+
+  <!-- 纪传故事页 -->
+  <section class="view view-story" id="viewStory">
+    <div class="story-scroll" id="storyScroll">
+      <p class="story-prologue" id="storyPrologue"></p>
+      <div class="story-hero">
+        <div class="image-placeholder-macro" id="macroPlaceholder"></div>
+        <h1 class="era-title" id="eraTitle"></h1>
+        <p class="era-theme" id="eraTheme"></p>
+        <p class="identity-voice" id="identityVoice"></p>
+      </div>
+      <div class="story-artifact">
+        <div class="artifact-layout">
+          <div class="image-placeholder-micro" id="microPlaceholder"></div>
+          <div class="artifact-text">
+            <p class="artifact-story reveal-trigger" id="artifactStory"></p>
+            <div class="cultural-value reveal-trigger" id="culturalValue"></div>
+          </div>
+        </div>
+      </div>
+      <div class="story-anchor">
+        <div class="geo-card">
+          <div class="geo-card-header">
+            <div class="geo-card-title">地理勘探卡片</div>
+            <div class="geo-card-seal">洛阳 · 十三朝寻迹</div>
+          </div>
+          <p class="geo-coord" id="geoCoord"></p>
+          <button class="btn-retry" id="btnRetry">再次占卜</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  (function() {
+    // 洛书数字与九朝严格映射
+    const LUOSHU_MAP = [
+      { num: 1, gua: '坎卦', guaName: '坎水', eraKey: '夏', theme: '泥与火的创世' },
+      { num: 2, gua: '坤卦', guaName: '坤地', eraKey: '商', theme: '夯土与信仰' },
+      { num: 3, gua: '震卦', guaName: '震雷', eraKey: '东周', theme: '礼乐与思想觉醒' },
+      { num: 4, gua: '巽卦', guaName: '巽风', eraKey: '东汉', theme: '太学与丝路' },
+      { num: 5, gua: '中宫', guaName: '中宫太极', eraKey: '曹魏', theme: '建安风骨，居中承启' },
+      { num: 6, gua: '乾卦', guaName: '乾天', eraKey: '西晋', theme: '洛阳纸贵' },
+      { num: 7, gua: '兑卦', guaName: '兑泽', eraKey: '北魏', theme: '伊水龙门造佛' },
+      { num: 8, gua: '艮卦', guaName: '艮山', eraKey: '隋', theme: '天下粮仓含嘉仓' },
+      { num: 9, gua: '离卦', guaName: '离火', eraKey: '唐', theme: '神都盛世大唐' }
+    ];
+
+    const ERA_DATA = [
+      { era: "夏", theme: "华夏之始，龙起斟鄩", identity: "斟鄩城里的镶嵌学徒",
+        macroImageHint: "[此处放置：二里头遗址网格状城市聚落复原图]", microImageHint: "[图片占位：绿松石龙形器 特写]",
+        macroVideo: "assets/erlitou.mp4",
+        story: "师傅说，这条龙是王的魂骨。我花了整整三个月，将两千余片绿松石一片片镶嵌在青铜牌饰上。火炉旁的汗水，铸成了这片大地上第一座真正的都城。那时的我们还不知道，这横平竖直的城市路网，这象征权力的青铜礼器，将在此后三千年里，奠定整个华夏民族「大一统」与「礼乐」的底色。",
+        culturalValue: "【文明锚点】二里头文化 —— 标志着中国从「满天星斗」的部落时代，正式迈入「广域王权」的国家时代。",
+        coordinate: "📍 现实寻迹：洛阳·二里头夏都遗址博物馆" },
+      { era: "商", theme: "甲骨问天，青铜铸鼎", identity: "西亳城宗庙旁的卜官助手",
+        macroImageHint: "[图片占位：偃师商城 宫殿基址与城墙 遗址航拍]", microImageHint: "[图片占位：商代青铜爵 / 甲骨卜辞 特写]",
+        story: "王每次出征前，都会在宗庙前用龟甲和兽骨占卜。我负责将卜官口述的裂纹解读刻在甲骨上——那些歪斜的笔画，后来成了汉字的滥觞。青铜炉火在城墙上空日夜不熄，鼎、爵、觚在匠人手中渐次成型。西亳，这座商人的早期都城，将青铜文明与神权政治熔为一炉。",
+        culturalValue: "【文明锚点】商代洛阳 —— 甲骨文与青铜礼器在此交汇，文字体系与王权礼仪雏形初具。",
+        coordinate: "📍 现实寻迹：偃师商城遗址公园 / 洛阳博物馆商代展厅" },
+      { era: "东周", theme: "礼崩乐坏中的思想觉醒", identity: "洛邑王城守藏室里的「小史」",
+        macroImageHint: "[图片占位：周王城天子驾六车马坑 遗址图]", microImageHint: "[图片占位：孔子入周问礼碑 / 青铜编钟 特写]",
+        story: "公元前518年的那天，一个叫孔丘的鲁国人来到洛邑，向我的长官老聃求教。他们在阳光下的那场对话，没有刀光剑影，却在后世千万读书人的心中掀起了惊涛骇浪。诸侯都在争霸，都在僭越那「天子驾六」的规矩。而我，只顾着擦拭那套刚刚铸好的编钟。",
+        culturalValue: "【文明锚点】周礼与诸子百家 —— 洛阳成为中国哲学与道德伦理的精神原乡。",
+        coordinate: "📍 现实寻迹：洛阳·周王城天子驾六博物馆 / 老子纪念馆" },
+      { era: "东汉", theme: "两京丝路，儒佛并峙", identity: "洛阳太学里负责刻石的工匠",
+        macroImageHint: "[图片占位：汉魏洛阳城 灵台/太学遗址 复原图]", microImageHint: "[图片占位：熹平石经残片 / 白马寺 特写]",
+        story: "熹平四年，皇帝下诏将五经刻石立于太学门外。我手中的刻刀在青石上飞舞，身后是三万太学生的诵读声。那一年，西域来的僧人牵着白马，载着佛经入住鸿胪寺。儒与佛，在洛阳城第一次相遇。",
+        culturalValue: "【文明锚点】太学与白马寺 —— 儒学官方化与佛教东传的双重起点。",
+        coordinate: "📍 现实寻迹：汉魏洛阳故城遗址 / 白马寺 / 洛阳博物馆熹平石经" },
+      { era: "曹魏", theme: "建安风骨，铜雀高台", identity: "铜雀台下的一名随军乐师",
+        macroImageHint: "[图片占位：曹魏洛阳城 铜雀台 复原想像图]", microImageHint: "[图片占位：曹魏墓壁画 出行图 / 建安七子 特写]",
+        story: "丞相说「对酒当歌，人生几何」，台下的文人们便纷纷和诗。建安的风，从废墟上吹来，带着血与酒的味道。洛阳在战火中几近倾圮，却在废墟上长出了中国文学最挺拔的风骨。",
+        culturalValue: "【文明锚点】建安文学 —— 洛阳孕育了「建安风骨」，开启了中国文学自觉的时代。",
+        coordinate: "📍 现实寻迹：曹魏大墓遗址 / 洛阳古墓博物馆" },
+      { era: "西晋", theme: "洛阳纸贵与金墉囚徒", identity: "洛阳大市里「造纸坊」的掌柜",
+        macroImageHint: "[图片占位：西晋洛阳城 金墉城 与市坊 复原图]", microImageHint: "[图片占位：三都赋 刻本 / 洛阳纸 特写]",
+        story: "左思的《三都赋》一出，全城的纸价都涨了。我每日在坊里督造纸张，看着那些士人争相传抄。城外金墉城关着失势的皇室，竹林里那七位狂人仍在饮酒长啸。洛阳纸贵，贵的不仅是纸，更是那个时代对文字与文明的狂热。",
+        culturalValue: "【文明锚点】洛阳纸贵与《三都赋》 —— 西晋洛阳成为文化传播的枢纽。",
+        coordinate: "📍 现实寻迹：金墉城遗址 / 老城历史文化街区" },
+      { era: "北魏", theme: "褒衣博带，佛光龙门", identity: "伊水河畔龙门石窟的凿岩匠人",
+        macroImageHint: "[图片占位：北魏洛阳城 永宁寺塔 与龙门 航拍]", microImageHint: "[图片占位：龙门石窟 宾阳中洞 主尊佛 特写]",
+        story: "皇帝下诏：鲜卑人须穿汉服、说汉语。我们这些来自草原的匠人，在伊阙的崖壁上凿刻大佛。佛像的衣褶渐渐变宽，变成了「褒衣博带」的汉式袈裟。汉化与胡风在石头里融合。",
+        culturalValue: "【文明锚点】孝文帝改革与龙门石窟 —— 民族融合的典范，佛教艺术中国化的里程碑。",
+        coordinate: "📍 现实寻迹：龙门石窟 / 洛阳博物馆北魏展厅" },
+      { era: "隋", theme: "天街贯南北，大运河心脏", identity: "含嘉仓里的一名计吏",
+        macroImageHint: "[图片占位：隋唐洛阳城 天街 定鼎门 与运河 复原图]", microImageHint: "[图片占位：含嘉仓 碳化粟米 特写]",
+        story: "运河上的漕船一眼望不到头。江南的稻米、河北的布帛，都汇聚到我脚下的这座含嘉仓。我每日在木简上刻下入库的数字，听说这座仓的粮食，足够天下人吃十年。大运河的心脏，在洛阳跳动。",
+        culturalValue: "【文明锚点】大运河与东都洛阳 —— 南北物资与文化交汇的节点。",
+        coordinate: "📍 现实寻迹：含嘉仓遗址 / 隋唐洛阳城定鼎门遗址" },
+      { era: "唐", theme: "丝路万国，神都盛世", identity: "定居南市的波斯胡商兼皇家花匠",
+        macroImageHint: "[图片占位：隋唐洛阳城 明堂天堂 宏伟复原图]", microImageHint: "[图片占位：洛阳博物馆 唐三彩骆驼 特写]",
+        story: "女皇的明堂高耸入云，天下万国的使节都在此朝拜。我乘着大运河的漕船来到神都，不仅在南市贩卖香料，还帮皇家培育一种叫「牡丹」的花。我只想把这神都的盛世繁华，永远绘在三彩的陶马上。",
+        culturalValue: "【文明锚点】神都洛阳与大运河 —— 丝绸之路的东方起点，包容并蓄的大唐。",
+        coordinate: "📍 现实寻迹：隋唐洛阳城国家遗址公园 / 洛阳博物馆唐三彩馆" }
+    ];
+
+    // 洛书九宫格方位（归一化 0-1，用于粒子与卦位）
+    const LUOSHU_POS = [
+      { x: 0.2, y: 0.2 }, { x: 0.5, y: 0.2 }, { x: 0.8, y: 0.2 },
+      { x: 0.2, y: 0.5 }, { x: 0.5, y: 0.5 }, { x: 0.8, y: 0.5 },
+      { x: 0.2, y: 0.8 }, { x: 0.5, y: 0.8 }, { x: 0.8, y: 0.8 }
+    ];
+    const LUOSHU_ORDER = [4, 9, 2, 3, 5, 7, 8, 1, 6];
+
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let canvasW, canvasH, particles = [];
+    let phase = 1;
+    let particleMode = 'drift';
+    let convergeProgress = 0;
+    let stormAngle = 0;
+    let stormSpeed = 0;
+    let compassRotation = 0;
+
+    function resizeCanvas() {
+      canvasW = canvas.width = window.innerWidth;
+      canvasH = canvas.height = window.innerHeight;
+      if (particles.length === 0) initParticles();
+    }
+
+    function initParticles() {
+      const count = 90;
+      particles = [];
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvasW,
+          y: Math.random() * canvasH,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          size: 1 + Math.random() * 1.5,
+          alpha: 0.3 + Math.random() * 0.5,
+          targetIdx: i % 9,
+          angle: Math.random() * Math.PI * 2,
+          radius: 80 + Math.random() * 120
         });
+      }
+    }
 
-        sections.forEach(s => s.classList.toggle('active', s.id === activeId));
+    function drawParticle(p) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200, 220, 210, ${p.alpha})`;
+      ctx.fill();
+    }
 
-        if (chapters[activeId]) {
-            const conf = chapters[activeId];
-            map.flyTo({ center: conf.center, zoom: conf.zoom, pitch: conf.pitch, duration: 1600, essential: true });
-            
-            Object.keys(zones).forEach(id => {
-                const isTarget = (id === conf.zone);
-                map.setPaintProperty(id, 'fill-opacity', isTarget ? 0.6 : 0);
-                map.setPaintProperty(id + '-line', 'line-opacity', isTarget ? 0.8 : 0);
-            });
+    function animateParticles() {
+      ctx.fillStyle = particleMode === 'drift' ? 'rgba(0,0,0,0.04)' : 'rgba(0,0,0,0.06)';
+      ctx.fillRect(0, 0, canvasW, canvasH);
+
+      if (particleMode === 'drift') {
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0 || p.x > canvasW) p.vx *= -1;
+          if (p.y < 0 || p.y > canvasH) p.vy *= -1;
+          p.x = Math.max(0, Math.min(canvasW, p.x));
+          p.y = Math.max(0, Math.min(canvasH, p.y));
+          drawParticle(p);
+        });
+      } else if (particleMode === 'converge') {
+        convergeProgress = Math.min(1, convergeProgress + 0.02);
+        const cx = canvasW / 2, cy = canvasH / 2;
+        const gridSize = Math.min(canvasW, canvasH) * 0.35;
+        particles.forEach((p, i) => {
+          const idx = p.targetIdx;
+          const pos = LUOSHU_POS[idx];
+          const tx = cx + (pos.x - 0.5) * gridSize * 2;
+          const ty = cy + (pos.y - 0.5) * gridSize * 2;
+          p.x += (tx - p.x) * 0.08;
+          p.y += (ty - p.y) * 0.08;
+          p.alpha = 0.5 + Math.sin(Date.now() * 0.003 + i) * 0.2;
+          drawParticle(p);
+        });
+      } else if (particleMode === 'compass') {
+        particles.forEach((p, i) => {
+          const idx = p.targetIdx;
+          const pos = LUOSHU_POS[idx];
+          const cx = canvasW / 2, cy = canvasH / 2;
+          const gridSize = Math.min(canvasW, canvasH) * 0.3;
+          p.x = cx + (pos.x - 0.5) * gridSize * 2;
+          p.y = cy + (pos.y - 0.5) * gridSize * 2;
+          p.alpha = 0.4 + Math.sin(Date.now() * 0.002 + i * 0.5) * 0.15;
+          drawParticle(p);
+        });
+      } else if (particleMode === 'storm') {
+        stormAngle += stormSpeed;
+        stormSpeed = Math.min(stormSpeed + 0.5, 12);
+        const cx = canvasW / 2, cy = canvasH / 2;
+        particles.forEach((p, i) => {
+          const r = p.radius + Math.sin(stormAngle + i * 0.5) * 20;
+          const a = stormAngle * 0.5 + (i / particles.length) * Math.PI * 4;
+          p.x = cx + Math.cos(a) * r;
+          p.y = cy + Math.sin(a) * r;
+          p.alpha = Math.min(1, 0.5 + stormSpeed * 0.04);
+          drawParticle(p);
+        });
+      }
+      requestAnimationFrame(animateParticles);
+    }
+
+    function setParticleMode(mode) {
+      particleMode = mode;
+      if (mode === 'converge') convergeProgress = 0;
+      if (mode === 'storm') {
+        stormAngle = 0;
+        stormSpeed = 2;
+        const cx = canvasW / 2, cy = canvasH / 2;
+        particles.forEach((p, i) => {
+          p.angle = (i / particles.length) * Math.PI * 2;
+          p.radius = 60 + Math.random() * 100;
+          p.x = cx + Math.cos(p.angle) * p.radius;
+          p.y = cy + Math.sin(p.angle) * p.radius;
+        });
+      }
+    }
+
+    const typewriterLines = [
+      '伏羲一画开天，神龟浮于洛水。',
+      '背负奇偶之数，演化天地九宫。',
+      '华夏的密码，尽在其中...'
+    ];
+
+    function runTypewriter() {
+      const line1 = document.getElementById('line1');
+      const line2 = document.getElementById('line2');
+      const line3 = document.getElementById('line3');
+      const lines = [line1, line2, line3];
+      let idx = 0;
+
+      function typeChar(el, text, i, onDone) {
+        if (i > text.length) {
+          setTimeout(() => {
+            el.classList.add('fadeout');
+            setTimeout(onDone, 800);
+          }, 2000);
+          return;
         }
+        el.textContent = text.slice(0, i);
+        el.classList.add('visible');
+        setTimeout(() => typeChar(el, text, i + 1, onDone), 80);
+      }
 
-        const progress = storyPanel.scrollTop / (storyPanel.scrollHeight - window.innerHeight);
-        document.getElementById('progress-bar').style.transform = `scaleX(${progress})`;
-    };
-</script>
+      function runNext() {
+        if (idx >= 3) {
+          document.getElementById('introTypewriterLayer').style.opacity = '0';
+          setTimeout(() => {
+            phase = 2;
+            setParticleMode('converge');
+            setTimeout(() => {
+              setParticleMode('compass');
+              document.getElementById('compassStage').classList.add('active');
+              document.getElementById('introTypewriterLayer').style.display = 'none';
+            }, 1200);
+          }, 600);
+          return;
+        }
+        lines[idx].textContent = '';
+        lines[idx].classList.remove('visible', 'fadeout');
+        typeChar(lines[idx], typewriterLines[idx], 0, () => {
+          idx++;
+          runNext();
+        });
+      }
+      runNext();
+    }
+
+    function initGuaMarkers() {
+      const container = document.getElementById('guaMarkers');
+      LUOSHU_ORDER.forEach((num, i) => {
+        const m = document.createElement('div');
+        m.className = 'gua-marker';
+        m.textContent = num;
+        m.dataset.num = num;
+        const pos = LUOSHU_POS[i];
+        m.style.left = (pos.x * 100) + '%';
+        m.style.top = (pos.y * 100) + '%';
+        container.appendChild(m);
+      });
+    }
+    initGuaMarkers();
+
+    let holdTimer = null;
+    let isHolding = false;
+    let nextNum = 1;
+    const taiChiBtn = document.getElementById('taiChiBtn');
+
+    function onPointerDown(e) {
+      e.preventDefault();
+      if (phase !== 2) return;
+      isHolding = true;
+      setParticleMode('storm');
+      taiChiBtn.classList.add('rotating');
+      holdTimer = setTimeout(() => taiChiBtn.classList.add('fast'), 800);
+    }
+
+    function onPointerUp(e) {
+      e.preventDefault();
+      if (!isHolding) return;
+      isHolding = false;
+      if (holdTimer) clearTimeout(holdTimer);
+      taiChiBtn.classList.remove('rotating', 'fast');
+      const num = nextNum;
+      nextNum = nextNum % 9 + 1;
+      const info = LUOSHU_MAP[num - 1];
+      highlightGua(num);
+      setParticleMode('compass');
+      setTimeout(() => {
+        document.getElementById('viewTransition').classList.add('flash');
+        setTimeout(() => {
+          goToStory(info);
+        }, 400);
+      }, 600);
+    }
+
+    function highlightGua(num) {
+      document.querySelectorAll('.gua-marker').forEach(m => {
+        m.classList.toggle('highlight', parseInt(m.dataset.num) === num);
+      });
+    }
+
+    function goToStory(info) {
+      const data = ERA_DATA[info.num - 1];
+      const prologue = document.getElementById('storyPrologue');
+      prologue.textContent = `你的灵魂落于【${info.guaName}·${info.num}】，唤醒了【${info.eraKey}】的记忆。`;
+      prologue.style.display = 'block';
+
+      // 处理宏观占位：有视频则嵌入视频，否则保持原有占位图文字
+      macroPlaceholder.classList.remove('has-video');
+      macroPlaceholder.innerHTML = '';
+      if (data.macroVideo) {
+        macroPlaceholder.classList.add('has-video');
+        const video = document.createElement('video');
+        video.src = data.macroVideo;
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.setAttribute('playsinline', 'true');
+        video.style.position = 'absolute';
+        video.style.inset = '0';
+        video.style.width = '100%';
+        video.style.height = '100%';
+        video.style.objectFit = 'cover';
+        macroPlaceholder.appendChild(video);
+      } else {
+        macroPlaceholder.textContent = data.macroImageHint;
+      }
+
+      microPlaceholder.textContent = data.microImageHint;
+      eraTitle.textContent = data.era + ' · ' + data.theme;
+      eraTheme.textContent = data.identity;
+      identityVoice.textContent = data.story;
+      artifactStory.textContent = data.story;
+      culturalValue.textContent = data.culturalValue;
+      geoCoord.textContent = data.coordinate;
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById('viewStory').classList.add('active');
+      storyScroll.scrollTo(0, 0);
+      setTimeout(() => {
+        scrollReveal();
+        initParallax();
+      }, 100);
+    }
+
+    taiChiBtn.addEventListener('mousedown', onPointerDown);
+    taiChiBtn.addEventListener('mouseup', onPointerUp);
+    taiChiBtn.addEventListener('mouseleave', onPointerUp);
+    taiChiBtn.addEventListener('touchstart', onPointerDown, { passive: false });
+    taiChiBtn.addEventListener('touchend', onPointerUp, { passive: false });
+    taiChiBtn.addEventListener('touchcancel', onPointerUp, { passive: false });
+
+    const viewStory = document.getElementById('viewStory');
+    const storyScroll = document.getElementById('storyScroll');
+    const macroPlaceholder = document.getElementById('macroPlaceholder');
+    const microPlaceholder = document.getElementById('microPlaceholder');
+    const eraTitle = document.getElementById('eraTitle');
+    const eraTheme = document.getElementById('eraTheme');
+    const identityVoice = document.getElementById('identityVoice');
+    const artifactStory = document.getElementById('artifactStory');
+    const culturalValue = document.getElementById('culturalValue');
+    const geoCoord = document.getElementById('geoCoord');
+    const btnRetry = document.getElementById('btnRetry');
+
+    function scrollReveal() {
+      const triggers = storyScroll.querySelectorAll('.reveal-trigger');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+      }, { threshold: 0.2, rootMargin: '0px 0px -80px 0px' });
+      triggers.forEach(t => observer.observe(t));
+    }
+
+    let parallaxBound = false;
+    function initParallax() {
+      if (parallaxBound) return;
+      parallaxBound = true;
+      storyScroll.addEventListener('scroll', () => {
+        if (!viewStory.classList.contains('active')) return;
+        const hero = storyScroll.querySelector('.story-hero');
+        if (!hero || !macroPlaceholder) return;
+        const rect = hero.getBoundingClientRect();
+        const rate = Math.max(0, 1 - rect.top / window.innerHeight) * 0.12;
+        macroPlaceholder.style.transform = `translateY(${rate * 25}px)`;
+      });
+    }
+
+    function onRetry() {
+      document.querySelectorAll('.gua-marker').forEach(m => m.classList.remove('highlight'));
+      storyScroll.querySelectorAll('.reveal-trigger').forEach(t => t.classList.remove('visible'));
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById('viewIntro').classList.add('active');
+      document.getElementById('introTypewriterLayer').style.display = 'flex';
+      document.getElementById('introTypewriterLayer').style.opacity = '1';
+      document.getElementById('compassStage').classList.remove('active');
+      phase = 1;
+      document.getElementById('line1').classList.remove('visible', 'fadeout');
+      document.getElementById('line2').classList.remove('visible', 'fadeout');
+      document.getElementById('line3').classList.remove('visible', 'fadeout');
+      nextNum = 1;
+      initParticles();
+      setParticleMode('drift');
+      runTypewriter();
+    }
+
+    btnRetry.addEventListener('click', onRetry);
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    animateParticles();
+    runTypewriter();
+  })();
+  </script>
 </body>
 </html>
-
-
