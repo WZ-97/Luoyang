@@ -1,40 +1,33 @@
 # Tracing Luoyang: Nine Dynasties Quest
 
-**Civilization empathy is the cornerstone of global peace.**
+> **Civilization empathy as the cornerstone of global peace.**
 
-### Project Demonstration (Video)
-[Watch the Screen Recording & Gameplay](https://screenapp.io/app/v/kM_dwTH9ZO)
-This video demonstrates the UI interaction, AI-generated narrative flow, and lifecycle-based experience.
+---
 
-### FINAL WORK (Live Demo)
-[EXPLORE THE QUEST NOW](https://wz-97.github.io/Luoyang/)
-Best experienced on Desktop Chrome/Safari.
+## FINAL WORK (Live Demo)
+### **[EXPLORE THE QUEST NOW](https://wz-97.github.io/Luoyang/)**
+*(Best experienced on Desktop Chrome/Safari)*
 
-### The Concept
-Tracing Luoyang: Nine Dynasties Quest is an interactive narrative project that maps 4,000 years of history onto a "Nine-lifecycle" system inspired by the Nine Palaces (Lo Shu Square) cosmology. 
+## Project Demonstration (Video)
+### **[Watch the Screen Recording & Gameplay](https://screenapp.io/app/v/kM_dwTH9ZO)**
+*This video demonstrates the UI interaction, AI-generated narrative flow, and the lifecycle-based mechanics.*
 
-**The Experience**
-Users navigate a 3×3 grid representing nine dynasties (from Xia to Tang), embodying roles such as artisans, scholars, and merchants, and experiencing personal destinies shaped by historical transformations. 
+---
 
-**The Intention**
-In an era of uncertainty, the project reactivates historical memory as a space for reflection on the relationship between individuals and social order. It seeks to cultivate empathy across cultures as a foundation for a more peaceful world. 
+## The Concept
+**Tracing Luoyang: Nine Dynasties Quest** is an interactive narrative project that maps 4,000 years of history onto a **"Nine-lifecycle" system** inspired by the Nine Palaces (Lo Shu Square) cosmology. 
 
-### AI Participation & Creative System
-This project is built as an end-to-end open-source AI-driven creative pipeline:
+- **The Gameplay**: Users navigate a 3x3 grid representing nine dynasties (from Xia to Tang). In each era, the user assumes a specific identity (e.g., artisan, student, or merchant) to experience personal fates intertwined with historical events.
+- **The Intention**: In an era of uncertainty, the project uses historical memory to facilitate reflection on the relationship between individuals and social order. It aims to foster empathy across cultures as a foundation for global peace.
 
-**Narrative Generation**
-Open-source LLMs transform archaeological data and historical materials into first-person narrative experiences.
+## AI Participation & Technology
+This project utilizes an end-to-end open-source AI pipeline to generate and calibrate all core content:
+1. **Content Generation**: All narrative scripts, character dialogues, and visual assets (including reconstructed cityscapes and artifact images) are generated using open-source Large Language Models and Diffusion models.
+2. **Historical Calibration**: AI-generated content is audited and refined based on archaeological data and historical texts to maintain factual accuracy.
+3. **Technical Stack**: The web interface is built with **Three.js** and **WebGPU** for responsive visual effects, utilizing **RAG (Retrieval-Augmented Generation)** principles to drive NPC interactions.
 
-**Visual Reconstruction**
-Diffusion and video models generate cityscapes, artifacts, and cinematic environments.
+## Scalability
+Luoyang serves as the first station. The project’s framework is designed to be scalable, with future plans to collaborate with other global ancient capitals to promote cross-regional cultural understanding.
 
-**Interactive Intelligence**
-RAG-based systems enable adaptive storytelling and dynamic NPC interactions.
-
-**Human Calibration**
-All outputs are critically aligned with historical scholarship to ensure accuracy and cultural integrity.
-
-### Scalability
-Luoyang serves as the inaugural node. The framework is designed to scale into a global network of ancient capitals, enabling cross-cultural storytelling and shared historical experience.
-
+---
 *Submitted for GOSIM Spotlight 2026: Frontier Creators.*
