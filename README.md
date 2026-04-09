@@ -1,26 +1,40 @@
 # Tracing Luoyang: Nine Dynasties Quest
 
-> **Civilization empathy is the cornerstone of global peace.**
+**Civilization empathy is the cornerstone of global peace.**
 
----
+### Project Demonstration (Video)
+[Watch the Screen Recording & Gameplay](https://screenapp.io/app/v/kM_dwTH9ZO)
+This video demonstrates the UI interaction, AI-generated narrative flow, and lifecycle-based experience.
 
-## FINAL WORK (Live Demo)
-### **[EXPLORE THE QUEST NOW](https://wz-97.github.io/Luoyang/)**
-*(Best experienced on Desktop Chrome/Safari)*
+### FINAL WORK (Live Demo)
+[EXPLORE THE QUEST NOW](https://wz-97.github.io/Luoyang/)
+Best experienced on Desktop Chrome/Safari.
 
----
+### The Concept
+Tracing Luoyang: Nine Dynasties Quest is an interactive narrative project that maps 4,000 years of history onto a "Nine-lifecycle" system inspired by the Nine Palaces (Lo Shu Square) cosmology. 
 
-## The Concept
-**Tracing Luoyang: Nine Dynasties Quest** is an immersive digital odyssey that maps 4,000 years of history onto the **Nine Palaces (Lo Shu Square)** cosmology. 
+**The Experience**
+Users navigate a 3×3 grid representing nine dynasties (from Xia to Tang), embodying roles such as artisans, scholars, and merchants, and experiencing personal destinies shaped by historical transformations. 
 
-- **The Gameplay**: Participants navigate through nine "lifecycles" (from Xia to Tang), experiencing history not as observers, but as characters (craftsmen, scholars, merchants) facing their unique fates.
-- **The Philosophy**: Through "Nine Lives," we reflect on the bond between individual and society, finding the **resilience** and **empathy** needed for world peace.
+**The Intention**
+In an era of uncertainty, the project reactivates historical memory as a space for reflection on the relationship between individuals and social order. It seeks to cultivate empathy across cultures as a foundation for a more peaceful world. 
 
-## AI-Powered Innovation
-This project is a full-stack demonstration of **Open-Source AI in Cultural Heritage**:
-1. **Content**: All narrative scripts and visual assets (3D models/cityscapes) are generated via open-source LLMs and Diffusion models.
-2. **Calibration**: AI outputs are rigorously cross-referenced with archaeological data to ensure historical integrity.
-3. **Tech Stack**: Built with **Three.js**, **WebGPU**, and **AI-driven RAG** for interactive storytelling.
+### AI Participation & Creative System
+This project is built as an end-to-end open-source AI-driven creative pipeline:
 
----
+**Narrative Generation**
+Open-source LLMs transform archaeological data and historical materials into first-person narrative experiences.
+
+**Visual Reconstruction**
+Diffusion and video models generate cityscapes, artifacts, and cinematic environments.
+
+**Interactive Intelligence**
+RAG-based systems enable adaptive storytelling and dynamic NPC interactions.
+
+**Human Calibration**
+All outputs are critically aligned with historical scholarship to ensure accuracy and cultural integrity.
+
+### Scalability
+Luoyang serves as the inaugural node. The framework is designed to scale into a global network of ancient capitals, enabling cross-cultural storytelling and shared historical experience.
+
 *Submitted for GOSIM Spotlight 2026: Frontier Creators.*
