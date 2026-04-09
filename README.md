@@ -28,11 +28,11 @@ Open-source LLMs transform archaeological data and historical materials into fir
 **Visual Reconstruction**
 Diffusion and video models generate cityscapes, artifacts, and cinematic environments.
 
-**Interactive Intelligence**
-NPC interactions and storyline progression are driven by RAG (Retrieval-Augmented Generation) principles, ensuring adaptive responses are grounded in specific historical contexts.
-
 **Technical Stack**
 The web interface is implemented using Three.js and WebGPU to ensure high-performance, responsive visual effects.
+
+**On-going Interactive Roadmap**
+Integration of RAG-based (Retrieval-Augmented Generation) NPC interactions is currently in development to enable adaptive, historically-grounded storytelling.
 
 **Human Calibration**
 All outputs are critically aligned with historical scholarship to ensure accuracy and cultural integrity.
