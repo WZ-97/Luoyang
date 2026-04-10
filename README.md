@@ -22,7 +22,7 @@ This video demonstrates the UI interaction, AI-generated narrative flow, and lif
 
 ## Final Work (Live Demo)
 
-[Explore the Quest now](https://wz-97.github.io/Luoyang/) Best experienced on Desktop Chrome/Safari.
+[Explore the Quest now](https://wz-97.github.io/Luoyang/). Best experienced on Desktop Chrome/Safari.
 
 <br>
 
