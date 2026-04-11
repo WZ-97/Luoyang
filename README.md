@@ -29,7 +29,7 @@ This video demonstrates the UI interaction, AI-generated narrative flow, and lif
 ## The Experience 
 
 The project intend to creates a seamless bridge between digital storytelling and physical space: 
-* **Web-Based Interface:** Users navigate an interactive 3×3 grid to traverse nine dynasties (from Xia to Tang). Through AI-driven scripts, they embody roles such as artisans, scholars, and merchants, making choices that reveal tension between personal life and the tides of history.
+* **Web-Based Interface**: The website serves as an interpretive entry point, presenting the project’s 3×3 narrative structure across nine dynasties from Xia to Tang. It introduces the roles, historical logic, and civilizational themes of the experience, while the full participatory journey is designed for offline museum and exhibition settings.
 *  **Museum Integration:** Beyond the screen, the project links to offline museums through AI-powered environmental storytelling. In-gallery AI agents serve as adaptive NPCs, transforming static artifact displays into a dynamic, personalized "immersive theater" where digital heritage meets real-world discovery.
 <br>
 
