@@ -34,21 +34,20 @@ The project intend to creates a seamless bridge between digital storytelling and
 <br>
 
 ## AI Participation & Creative System
-This project is built as an end-to-end open-source AI-driven creative pipeline:
-* **Narrative Generation**:
-Open-source LLMs transform archaeological data and historical materials into first-person narrative experiences.
-* **Visual Reconstruction**:
-Diffusion and video models generate cityscapes, artifacts, and cinematic environments.
-* **Technical Stack**:
-The web interface is implemented using Three.js and WebGPU to ensure high-performance, responsive visual effects.
-* **On-going Interactive Roadmap**:
-Integration of RAG-based (Retrieval-Augmented Generation) NPC interactions is currently in development to enable adaptive, historically-grounded storytelling.
-* **Human Calibration**:
-All outputs are critically aligned with historical scholarship to ensure accuracy and cultural integrity.
+
+This project is developed through an end-to-end open-source, AI-assisted creative pipeline:
+* **Narrative Generation:** Open-source LLMs are used under author direction to develop first-person narrative experiences based on archaeological and historical materials.
+* **Visual Reconstruction:** Diffusion and video models are guided to produce cityscapes, artifacts, and cinematic environments.
+* **Technical Stack:** The web interface is implemented using Three.js and WebGPU to ensure high-performance, responsive visual effects.
+* **Ongoing Interactive Roadmap:** RAG-based (Retrieval-Augmented Generation) NPC interactions are in development to enable adaptive, historically grounded storytelling.
+* **Human Calibration:** All outputs are curated, verified, and aligned with historical scholarship to ensure accuracy and cultural integrity.
 <br>
 
 ## Scalability
+
 Luoyang serves as the first station. The framework is designed to scale into a global network of ancient capitals, enabling cross-cultural storytelling and shared historical experience.
+
+<br>
 
 ## Credits & Ownership
 
