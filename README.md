@@ -8,7 +8,7 @@
 </div>
 
 <h4 align="justify"> 
-For over four thousand years, Luoyang has stood at the heart of Chinese civilization, where history unfolds not in lines, but in cycles. Tracing Luoyang: Nine Dynasties Quest draws from an ancient Chinese cosmology—the Hetu and Luoshu, two diagrams said to encode the order of the universe—and the Nine Palaces of the I Ching. Nine positions. Nine forces. Nine phases of transformation. The project maps this structure onto history, tracing nine dynasties from Xia to Tang as a continuous rhythm of rise, fracture, and renewal. Across these shifting orders, participants move through time, inhabiting different roles, reflecting on the bond between self and society, and finding resilience through historical empathy in an age of uncertainty.
+For over four millennia, Luoyang has been a center of Chinese civilization. Here, time unfolds not as a line, but as a pattern that re-emerges across nine dynasties. Tracing Luoyang: Nine Dynasties Quest draws from an ancient Chinese cosmology—the Hetu and Luoshu, two diagrams said to encode the order of the universe—and the Nine Palaces of the I Ching. Nine positions. Nine forces. Nine phases of transformation. The project maps this structure onto history, tracing nine dynasties from Xia to Tang as a continuous rhythm of rise, fracture, and renewal. Across these shifting orders, participants move through time, inhabiting different roles, reflecting on the bond between self and society, and finding resilience through historical empathy in an age of uncertainty.
 </h4>
 <br>
 
