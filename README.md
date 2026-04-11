@@ -50,6 +50,12 @@ All outputs are critically aligned with historical scholarship to ensure accurac
 ## Scalability
 Luoyang serves as the first station. The framework is designed to scale into a global network of ancient capitals, enabling cross-cultural storytelling and shared historical experience.
 
+## Credits & Ownership
+
+This project is created through an AI-assisted workflow, with all ideas, structure, and creative direction defined by the author.
+All texts, visuals, videos, and interactive elements are produced, selected, and composed under the author’s direction as a unified work.
+This project is original and protected by copyright. Reproduction or use without permission is not allowed.
+
 <br>
 
 *Submitted for GOSIM Spotlight 2026: Frontier Creators.*
