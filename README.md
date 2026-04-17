@@ -12,7 +12,7 @@ For over four millennia, Luoyang has been a center of Chinese civilization. Here
 </h4>
 <br>
 
-## Project Demonstration (Video)
+## Demonstration Video
 
 [Watch the Screen Recording & Gameplay](https://screenapp.io/app/v/kM_dwTH9ZO)  
 
@@ -59,4 +59,4 @@ This project is original and protected by copyright. Reproduction or use without
 
 <br>
 
-*Submitted for GOSIM Spotlight 2026: Frontier Creators.*
+*Submitted for GOSIM Paris Spotlight 2026: Frontier Creators.*
